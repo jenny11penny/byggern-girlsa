@@ -6,22 +6,30 @@
 #include <util/delay.h>
 #include <stdio.h>
 #include "uart.h"
+#include "sram_test.c"
 
 
 int main(void)
 {
-    unsigned char c;
+
     USART_Init(MYUBRR);
-
-    USART_Transmit('a');
-
     fdevopen(uart_putchar, uart_getchar);
 
-    printf("Hei!\r\n");
+    MCUCR = (1 << SRE);
+
+    SFIOR |= (1 << XMM2);
+
+    SRAM_TEST();
 
     while (1)
     {
-    c = USART_Receive();
-    USART_Transmit(c);
+        *((volatile uint8_t *)0x1000) = 0;
+        _delay_ms(1000);
+
+        *((volatile uint8_t *)0x1003) = 0;
+        _delay_ms(1000);
+
+        
+
     }
 }

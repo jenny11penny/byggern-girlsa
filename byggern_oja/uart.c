@@ -2,7 +2,7 @@
 #include <avr/io.h>
 
 
-void USART_Init(unsigned int ubrr)
+void USART_Init(unsigned int ubrr)  
 {
     /* Set baud rate */
     UBRR0H = (unsigned char)(ubrr>>8);
