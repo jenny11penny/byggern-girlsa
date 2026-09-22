@@ -8,6 +8,8 @@
 #include "uart.h"
 #include "sram_test.h"
 #include "adc.h"
+#include "spi.h"
+#include "OLED.h"
 
 int main(void)
 {
@@ -27,6 +29,18 @@ int main(void)
     ADC_clock_init();
     ADC_calibrate();
 
+    SPI_Init();
+    OLED_Init();
+
+     OLED_Pos(0, 0);
+    OLED_Print("Hei PUSER!");
+
+    OLED_Pos(2, 0);
+    OLED_Print("hei");
+
+    OLED_Pos(4, 10);
+    OLED_Print("67");
+
     while (1)
     {
         //Test for å sjekke at CS veksler mellom høy og lav
@@ -35,11 +49,6 @@ int main(void)
 
         //*sram = 0xAA;
         //_delay_ms(1000);
-       
-
-        
-
-
 
         //*((volatile uint8_t *)0x1000) = 0;
         //_delay_ms(1000);

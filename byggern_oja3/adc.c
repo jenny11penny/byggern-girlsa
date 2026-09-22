@@ -3,6 +3,7 @@
 #include "adc.h"
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdio.h>
 
 #define ADC_ADDRESS 0x1000
 
