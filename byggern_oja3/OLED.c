@@ -10,46 +10,44 @@
 #define OLED_DC PB2
 
 static void OLED_DC_Init(void) {
-    DDRB |= (1 << OLED_DC);
+    DDRB |= (1 << OLED_DC); 
 }
 
 static void OLED_Command(uint8_t cmd) {
-    PORTB &= ~(1 << OLED_DC);
+    PORTB &= ~(1 << OLED_DC); //DC=lav -> kommando
     SPI_Select(1);
     SPI_WriteByte(cmd);
     SPI_Deselect(1);
 }
 
 static void OLED_Data(uint8_t data) {
-    PORTB |= (1 << OLED_DC);    // høy = data
+    PORTB |= (1 << OLED_DC);    // DC=høy -> data
     SPI_Select(1);
     SPI_WriteByte(data);
     SPI_Deselect(1);
 }
 
-void OLED_Init(void) {
+void OLED_Init(void) { //Fant ikke init fil, så brukte ChatGPT 
     OLED_DC_Init();
 
-    OLED_Command(0xAE);
+    OLED_Command(0xAE); //Display av
 
     OLED_Command(0xD5); OLED_Command(0x80); // klokkefrekvens
     OLED_Command(0xA8); OLED_Command(0x3F); // multiplex ratio (64-1)
     OLED_Command(0xD3); OLED_Command(0x00); // display offset
     OLED_Command(0x40);                     // start linje 0
 
-    OLED_Command(0x8D); OLED_Command(0x14); // charge pump - VERIFISER mot databladet!
-
-    OLED_Command(0x20); OLED_Command(0x00); // horisontal adresseringsmodus
+    OLED_Command(0x20); OLED_Command(0x02); // page adresseringsmodus
     OLED_Command(0xA1);                     // segment remap
     OLED_Command(0xC8);                     // COM scan retning
 
     OLED_Command(0xDA); OLED_Command(0x12); // COM pins config
-    OLED_Command(0x81); OLED_Command(0xCF); // kontrast
-    OLED_Command(0xD9); OLED_Command(0xF1); // pre-charge periode
+    OLED_Command(0x81); OLED_Command(0xCF); // kontrast 0xCF = 207
+    OLED_Command(0xD9); OLED_Command(0x22); // pre-charge periode
     OLED_Command(0xDB); OLED_Command(0x40); // VCOMH nivå
 
     OLED_Command(0xA4); // vis RAM-innhold (ikke "all pixels on")
-    OLED_Command(0xA7); // normal (ikke invertert) visning
+    OLED_Command(0xA6); // normal (ikke invertert) visning
 
     OLED_Command(0xAF); // display på
 
@@ -66,7 +64,6 @@ void OLED_GotoColumn(uint8_t column) {
     OLED_Command(0x00 | (column & 0x0F));        // kolonne, lav nibble
     OLED_Command(0x10 | ((column >> 4) & 0x0F)); // kolonne, høy nibble
 }
-
 
 void OLED_Pos(uint8_t row, uint8_t column) {
     OLED_GotoLine(row);
@@ -87,10 +84,10 @@ void OLED_ClearLine(uint8_t line) {
 
 void OLED_Clear(void) {
     for (uint8_t page = 0; page < 8; page++) {
-        OLED_GotoLine(page);
+        OLED_ClearLine(page);
         }
+        OLED_Home();
 }
-
 
 void OLED_WriteChar(char c) {
     if (c < ' ' || c > '~') {
@@ -110,3 +107,4 @@ void OLED_Print(const char *str) {
         str++;
     }
 }
+

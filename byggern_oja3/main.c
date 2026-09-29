@@ -10,6 +10,7 @@
 #include "adc.h"
 #include "spi.h"
 #include "OLED.h"
+#include "menu.h"
 
 int main(void)
 {
@@ -20,9 +21,7 @@ int main(void)
     MCUCR |= (1 << SRE); //aktivere extermal memomry
 
     SFIOR |= (1 << XMM2); //
-
     
-
     volatile uint8_t *adc = (uint8_t *)0x1000;
     volatile uint8_t *sram = (uint8_t *)0x1800;
 
@@ -31,18 +30,44 @@ int main(void)
 
     SPI_Init();
     OLED_Init();
+    OLED_Clear();
 
-     OLED_Pos(0, 0);
-    OLED_Print("Hei PUSER!");
+    OLED_Pos(0,0);
+    //OLED_Print("H");
 
-    OLED_Pos(2, 0);
-    OLED_Print("hei");
+    const char *options[] = {"JA", "NEI", "KANSKJE"};
+    uint8_t size = sizeof(options) / sizeof(options[0]);
 
-    OLED_Pos(4, 10);
-    OLED_Print("67");
+    menu_init(options, size);
+
+    joystick_btn_init();
 
     while (1)
     {
+        if (!joystick_btn_pressed()) {
+            menu_update(options, size);
+           _delay_ms(200);
+        }
+        
+        else {
+            menu_close();
+            int selected = get_selected();
+
+            OLED_Pos(0,0);
+            OLED_Clear();
+
+            switch(selected) {
+                case 0:
+                OLED_Print("valg 1"); break;
+                case 1:
+                OLED_Print("valg 2"); break;
+                case 2:
+                OLED_Print("valg 3"); break;
+            }
+
+        }
+
+        
         //Test for å sjekke at CS veksler mellom høy og lav
         //*adc = 0x55;
         //_delay_ms(1000);

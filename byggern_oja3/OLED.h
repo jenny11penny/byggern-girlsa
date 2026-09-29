@@ -13,4 +13,6 @@ void OLED_Pos(uint8_t row, uint8_t column);
 void OLED_WriteChar(char c);
 void OLED_Print(const char *str);
 
+//void OLED_Reset(void);
+
 #endif

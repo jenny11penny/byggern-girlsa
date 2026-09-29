@@ -22,3 +22,6 @@ void ADC_clock_init(void);
 Position ADC_read_pos(void);
 Direction ADC_read_dir(void);
 void adc_test(void);
+
+void joystick_btn_init(void);
+uint8_t joystick_btn_pressed(void);

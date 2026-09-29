@@ -88,10 +88,11 @@ Position ADC_read_pos(void) {
 Direction ADC_read_dir(void) {
     Position position = ADC_read_pos();
 
-    if (position.x < 30) {
+    
+    if (position.x < -30) {
         return LEFT;
     }
-    if (position.x > -30) {
+    if (position.x > 30) {
         return RIGHT;
     }
     if (position.y > 30) {
@@ -100,16 +101,24 @@ Direction ADC_read_dir(void) {
     if (position.y < -30) {
         return DOWN;
     }
-
     return NEUTRAL;
 }
 
 void adc_test(void) {
     Position pos = ADC_read_pos();
 
-    //printf("X: %d Y: %d\r\n", pos.x, pos.y);
-    printf("X: %d Y: %d\r\n", pos.x_touch, pos.y_touch);
+    printf("X: %d Y: %d\r\n", pos.x, pos.y);
+    //printf("X: %d Y: %d\r\n", pos.x_touch, pos.y_touch);
     //adc_test();
     _delay_ms(500);
 }
 
+
+void joystick_btn_init(void) {
+    DDRB &= ~(1 << PB1); //Sett PB1 som input
+    PORTB |= (1 << PB1); //Aktivere intern pull-up
+}
+
+uint8_t joystick_btn_pressed(void) {
+    return !(PINB & (1 << PB1)); //Leser av PB1, hvis lav(knapp trykket) = returner 1, hvis høy = returner 0
+}
